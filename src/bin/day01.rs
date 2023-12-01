@@ -1,68 +1,75 @@
-fn to_digit_str(value: &str) -> Option<&str> {
-    match value {
-        value if value.ends_with("zero") => Some("0"),
-        value if value.ends_with("one") => Some("1"),
-        value if value.ends_with("two") => Some("2"),
-        value if value.ends_with("three") => Some("3"),
-        value if value.ends_with("four") => Some("4"),
-        value if value.ends_with("five") => Some("5"),
-        value if value.ends_with("six") => Some("6"),
-        value if value.ends_with("seven") => Some("7"),
-        value if value.ends_with("eight") => Some("8"),
-        value if value.ends_with("nine") => Some("9"),
-        _ => None,
-    }
-}
-
-fn normalize_line(line: &str) -> String {
-    let mut result = String::new();
+fn find_first_digit(line: &str) -> Option<u32> {
     let mut buffer = String::new();
 
-    // Should go ahead and learn a parser like chumsky or something
-    line.chars().for_each(|c| {
-        if char::is_digit(c, 10) {
-            result.push(c);
-            buffer.clear();
-            return;
+    for c in line.chars() {
+        if let Some(num) = char::to_digit(c, 10) {
+            return Some(num);
         }
 
         buffer.push(c);
-        if let Some(num) = to_digit_str(buffer.as_str()) {
-            result.push_str(num);
-            buffer.clear();
+        match buffer {
+            b if b.ends_with("zero") => return Some(0),
+            b if b.ends_with("one") => return Some(1),
+            b if b.ends_with("two") => return Some(2),
+            b if b.ends_with("three") => return Some(3),
+            b if b.ends_with("four") => return Some(4),
+            b if b.ends_with("five") => return Some(5),
+            b if b.ends_with("six") => return Some(6),
+            b if b.ends_with("seven") => return Some(7),
+            b if b.ends_with("eight") => return Some(8),
+            b if b.ends_with("nine") => return Some(9),
+            _ => continue,
         }
-    });
+    };
 
-    result
+    None
+}
+
+fn find_last_digit(line: &str) -> Option<u32> {
+    let mut buffer = String::new();
+
+    for c in line.chars().rev() {
+        if let Some(num) = char::to_digit(c, 10) {
+            return Some(num);
+        }
+
+        buffer.push(c);
+        match buffer {
+            b if b.ends_with("orez") => return Some(0),
+            b if b.ends_with("eno") => return Some(1),
+            b if b.ends_with("owt") => return Some(2),
+            b if b.ends_with("eerht") => return Some(3),
+            b if b.ends_with("ruof") => return Some(4),
+            b if b.ends_with("evif") => return Some(5),
+            b if b.ends_with("xis") => return Some(6),
+            b if b.ends_with("neves") => return Some(7),
+            b if b.ends_with("thgie") => return Some(8),
+            b if b.ends_with("enin") => return Some(9),
+            _ => continue,
+        }
+    };
+
+    None
 }
 
 fn get_num(line: &str) -> u32 {
-    // O(n) pass, O(1) mem -- may be composed better with things like
-    // filter digits w/ first/last
-    let mut have_first = false;
-    let mut first = 0;
-    let mut second = 0;
+    let first_digit = find_first_digit(line);
+    let second_digit = find_last_digit(line);
 
-    normalize_line(line).chars().for_each(|c| {
-        if let Some(dig) = c.to_digit(10) {
-            if !have_first {
-                first = dig;
-                have_first = true;
-            }
-
-            second = dig;
-        }
-    });
-
-    (first * 10) + second
+    match (first_digit, second_digit) {
+        (Some(f), Some(l)) => (f * 10) + l,
+        _ => unreachable!("Didnt find digit"),
+    }
 }
 
 fn main() {
     let input = aoc2023::read_input(1);
 
-    let sum = input.lines().map(get_num).sum::<u32>();
-    println!("{}\n-=======-", sum);
+    let values = input.lines().map(|line| (line, get_num(line))).collect::<Vec::<(&str, u32)>>();
+    let sum = values.iter().map(|(_, val)| val).sum::<u32>();
 
-    let numbers = input.lines().map(get_num).collect::<Vec<u32>>();
-    println!("{:?}", numbers);
+    println!("{}\n ======= ", sum);
+    // for value in values {
+    //     println!("{:50} - {}", value.0, value.1);
+    // }
 }
