@@ -75,6 +75,18 @@ fn is_impossible(bag: &DicePull, game: &Game) -> bool {
   })
 }
 
+fn max_pull(game: &Game) -> DicePull {
+  DicePull {
+    red: game.pulls.iter().max_by(|&x, &y| x.red.cmp(&y.red)).unwrap().red,
+    green: game.pulls.iter().max_by(|&x, &y| x.green.cmp(&y.green)).unwrap().green,
+    blue: game.pulls.iter().max_by(|&x, &y| x.blue.cmp(&y.blue)).unwrap().blue,
+  }
+}
+
+fn power_of_pull(pull: &DicePull) -> u32 {
+  pull.red as u32 * pull.green as u32 * pull.blue as u32
+}
+
 fn main() {
   let bag = DicePull { red: 12, green: 13, blue: 14 };
   let parser = parser();
@@ -88,7 +100,12 @@ fn main() {
     .filter(|game| !is_impossible(&bag, game));
 
   // println!("{:?}", possible_games);
-
   let sum_of_possible_game_ids: u32 = possible_games.map(|g| g.id as u32).sum();
-  println!("{}", sum_of_possible_game_ids );
+  println!("Sum of possible game Ids: {}", sum_of_possible_game_ids);
+
+  let sum_of_game_powers: u32 = games.clone()
+    .map(|game| max_pull(&game))
+    .map(|pull| power_of_pull(&pull))
+    .sum();
+  println!("Sum of power of max pull: {}", sum_of_game_powers);
 }
