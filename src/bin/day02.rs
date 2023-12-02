@@ -80,9 +80,11 @@ fn main() {
   let parser = parser();
   let input = aoc2023::read_input(2);
 
-  let possible_games = input.lines()
+  let games = input.lines()
     .map(|line| parser.parse(line))
-    .filter_map(|parsed| parsed.ok())
+    .filter_map(|parsed| parsed.ok());
+
+  let possible_games = games.clone()
     .filter(|game| !is_impossible(&bag, game));
 
   // println!("{:?}", possible_games);
