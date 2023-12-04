@@ -3,7 +3,7 @@
 use aoc2023::Coordinate;
 use itertools::Itertools;
 
-#[derive(Clone, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, Hash, PartialEq)]
 struct Symbol {
     value: char,
     coordinate: Coordinate,
@@ -88,18 +88,15 @@ fn main() {
         .filter(|p| p.symbols.len() > 0)
         .collect::<Vec<ProductNumber>>();
 
-    println!("{:?}", geared_products);
+    // println!("{:?}", geared_products);
 
     let geared_collections= geared_products.iter()
-        .group_by(|p| p.symbols.first().unwrap().clone());
-    // This isn't returning full groups for some reason... some groups, but not all groups (e.g. Coordinate(8, 1) returns only 180, not 180 and 923)
-    // GEEEEEEZUS WTF - https://github.com/rust-itertools/itertools/issues/374
-
-    println!("{:?}", geared_collections);
+        .map(|p| (p.symbols.first().unwrap().clone(), p.id))
+        .into_group_map();
 
     let geared_pairs = geared_collections
         .into_iter()
-        .map(|grouping| grouping.1.map(|g| g.id).collect::<Vec::<u32>>())
+        .map(|(_, ids)| ids)
         .filter(|product_ids| product_ids.len() == 2);
 
     let sum_of_geared_pair_ratios: u32 = geared_pairs
