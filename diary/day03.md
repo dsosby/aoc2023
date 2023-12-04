@@ -18,3 +18,7 @@ I'll have to come back to this later today, but one general idea will be to:
  - Filter groups to those with 2 parts
  - Map to calculated gear ratio
  - Sum
+
+## After Thought
+
+This probably could have been done like water islands instead, building out a set of graphs.

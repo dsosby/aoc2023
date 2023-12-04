@@ -17,7 +17,7 @@ pub fn read_input(day: u32) -> String {
 pub type Matrix = Vec::<Vec::<char>>;
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Coordinate(pub usize, pub usize);
 
 pub fn get_bordering(matrix: &Matrix, top_left_col: usize, top_left_row: usize, bot_right_col: usize, bot_right_row: usize) -> Vec::<Coordinate> {
