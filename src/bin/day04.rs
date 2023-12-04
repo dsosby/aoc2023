@@ -26,31 +26,57 @@ fn game_parser() -> impl Parser<char, Card, Error = Simple<char>> {
       .map(|((id, numbers), winning_numbers)| Card { id, numbers, winning_numbers })
 }
 
-fn get_score(matching: usize) -> u32 {
+fn winner_count(game: &Card) -> u32 {
+  let number_set: BTreeSet<u32> = game.numbers.iter().cloned().collect();
+  let winning_set: BTreeSet<u32> = game.winning_numbers.iter().cloned().collect();
+
+  number_set.intersection(&winning_set).count() as u32
+}
+
+fn get_score(matching: u32) -> u32 {
     match matching {
         0 => 0,
         n => 1 << n - 1,
     }
 }
 
-fn score_game(game: &Card) -> u32 {
-  let number_set: BTreeSet<u32> = game.numbers.iter().cloned().collect();
-  let winning_set: BTreeSet<u32> = game.winning_numbers.iter().cloned().collect();
-  let num_winners = number_set.intersection(&winning_set).count();
+fn score_card(game: &Card) -> u32 {
+  get_score(winner_count(game))
+}
 
-  get_score(num_winners)
+fn process_cards(hand: &Vec<Card>) -> Vec<u32> {
+  let mut counts : Vec<u32> = vec![1; hand.len()];
+
+  for card in hand {
+    let idx = card.id as usize - 1;
+    let card_count = *counts.get(idx).unwrap();
+    let num_winners = winner_count(card);
+
+    for won_card_idx in (idx + 1)..(idx + 1 + num_winners as usize) {
+      *counts.get_mut(won_card_idx as usize).unwrap() += 1 * card_count;
+    }
+  }
+
+  counts
 }
 
 fn main() {
   let input = aoc2023::read_input(4);
   let parser = game_parser();
 
-  let games = input.lines()
+  let deck = input.lines()
     .map(|line| parser.parse(line))
     .filter_map(|parsed| parsed.ok())
     .collect::<Vec<Card>>();
 
   //  How many points are they worth in total?
-  let total_points: u32 = games.iter().map(score_game).sum();
+  let total_points: u32 = deck.iter().map(score_card).sum();
   println!("Part 1: {}", total_points);
+
+  // Achshually
+  // We earn copies of those cards when we win
+  // How many total scratchcards do you end up with?
+  let card_counts = process_cards(&deck);
+  let total_card_count = card_counts.iter().sum::<u32>();
+  println!("Part 2: {}", total_card_count);
 }
