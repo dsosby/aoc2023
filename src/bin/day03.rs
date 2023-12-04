@@ -1,9 +1,17 @@
 #![allow(dead_code)]
 
+use aoc2023::Coordinate;
+
+#[derive(Clone, Debug)]
+struct Symbol {
+    value: char,
+    coordinate: Coordinate,
+}
+
 #[derive(Clone, Debug)]
 struct ProductNumber {
     id: u32,
-    symbols: Vec<char>,
+    symbols: Vec<Symbol>,
 }
 
 fn extract_products(matrix: &Vec<Vec<char>>) -> Vec<ProductNumber> {
@@ -34,9 +42,9 @@ fn extract_products(matrix: &Vec<Vec<char>>) -> Vec<ProductNumber> {
                         row_idx,
                     )
                     .iter()
-                    .filter(|&&c| c != '.' && c.is_ascii_punctuation())
-                    .copied()
-                    .collect::<Vec<char>>();
+                    .map(|coordinate| Symbol { coordinate: coordinate.clone(), value: *matrix.get(coordinate.1).unwrap().get(coordinate.0).unwrap() })
+                    .filter(|sym| sym.value != '.' && sym.value.is_ascii_punctuation())
+                    .collect::<Vec<Symbol>>();
 
                     if !symbols.is_empty() {
                       products.push(ProductNumber { id, symbols });
@@ -59,4 +67,7 @@ fn main() {
     // Part 1 - What is the sum of all of the part numbers in the engine schematic?
     let sum_of_products: u32 = products.iter().map(|p| p.id).sum();
     println!("Part 1: {}", sum_of_products);
+
+    // Part 2 - What is the sum of all of the gear ratios in your engine schematic?
+    // let sum_of_gear_ratios: u32 = products.iter().filter()
 }
