@@ -16,13 +16,15 @@ struct Card {
 /// Card   1: 17 15  5 75 36 13 16 66 92 39 | 13 92 16  5 87 78 15 94 21 48 30 62 70 41  3 39 22 17 77 58 75 52 83 34 24
 fn game_parser() -> impl Parser<char, Card, Error = Simple<char>> {
   let number = text::digits(10).from_str::<u32>().unwrapped();
+  let id = number.clone().padded();
+  let numbers = number.clone().padded().repeated();
 
   just("Card")
-      .ignore_then(number.clone().padded())
+      .ignore_then(id)
       .then_ignore(just(":").padded())
-      .then(number.clone().padded().repeated())
+      .then(numbers)
       .then_ignore(just("|").padded())
-      .then(number.clone().padded().repeated())
+      .then(numbers)
       .map(|((id, numbers), winning_numbers)| Card { id, numbers, winning_numbers })
 }
 
@@ -79,4 +81,17 @@ fn main() {
   let card_counts = process_cards(&deck);
   let total_card_count = card_counts.iter().sum::<u32>();
   println!("Part 2: {}", total_card_count);
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_game_parser() {
+    let card = game_parser().parse("Card  1: 17 15  5 75 36 13 16 66 92 39 | 13 92 16  5 87 78 15 94 21 48 30 62 70 41  3 39 22 17 77 58 75 52 83 34 24").unwrap();
+    assert_eq!(card.id, 1);
+    assert_eq!(card.numbers, vec![17, 15, 5, 75, 36, 13, 16, 66, 92, 39]);
+    assert_eq!(card.winning_numbers, vec![13, 92, 16, 5, 87, 78, 15, 94, 21, 48, 30, 62, 70, 41, 3, 39, 22, 17, 77, 58, 75, 52, 83, 34, 24]);
+  }
 }
