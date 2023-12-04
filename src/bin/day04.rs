@@ -21,9 +21,9 @@ fn game_parser() -> impl Parser<char, Card, Error = Simple<char>> {
 
   just("Card")
       .ignore_then(id)
-      .then_ignore(just(":").padded())
+      .then_ignore(just(":"))
       .then(numbers)
-      .then_ignore(just("|").padded())
+      .then_ignore(just("|"))
       .then(numbers)
       .map(|((id, numbers), winning_numbers)| Card { id, numbers, winning_numbers })
 }
