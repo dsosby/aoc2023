@@ -72,8 +72,8 @@ fn main() {
     let products = extract_products(&matrix);
 
     // Part 1 - What is the sum of all of the part numbers in the engine schematic?
-    // let sum_of_products: u32 = products.iter().map(|p| p.id).sum();
-    // println!("Part 1: {}", sum_of_products);
+    let sum_of_products: u32 = products.iter().map(|p| p.id).sum();
+    println!("Part 1: {}", sum_of_products);
 
     // Part 2 - What is the sum of all of the gear ratios in your engine schematic?
     // let count_of_multi_gears = products
