@@ -12,7 +12,7 @@ impl MapTable {
     let map_range = &self.remaps.iter().find(|(_, range)| range.contains(&input));
 
     match map_range {
-      Some((dest_idx, range)) => input + (dest_idx - range.start),
+      Some((dest_idx, range)) => dest_idx + (input - range.start),
       None => input,
     }
   }
