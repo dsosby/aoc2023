@@ -1,6 +1,7 @@
 use std::ops::Range;
 
 use chumsky::prelude::*;
+use itertools::Itertools;
 
 #[derive(Clone, Debug)]
 struct MapTable {
@@ -65,6 +66,28 @@ fn main() {
     })
     .min();
   println!("Part 1: {:?}", min_location);
+
+  // Achshually - those seeds are many more than that
+  // They are range pairs, e.g. X Y -> start..(start+y)
+  // Same question - of all of _those_ seeds which has the closet location?
+  let moar_seeds = seeds.iter()
+    .chunks(2)
+    .into_iter()
+    .flat_map(|mut chnk| {
+      let start = *chnk.next().unwrap();
+      let count = *chnk.next().unwrap();
+
+      start..(start + count)
+    })
+    .collect::<Vec<u128>>();
+
+  let min_location_of_all = moar_seeds.iter()
+    .map(|&seed| {
+      maps.iter().fold(seed, |current, remap| remap.map(current))
+    })
+    .min();
+  println!("Part 2: {:?}", min_location_of_all);
+
 }
 
 #[cfg(test)]
