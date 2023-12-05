@@ -29,13 +29,9 @@
       "cargo": {
         "args": [
           "build",
-          "--bin=day04",
+          "--bin=day05",
           "--package=aoc2023"
         ],
-        "filter": {
-          "name": "day04",
-          "kind": "bin"
-        }
       },
       "args": [],
       "cwd": "${workspaceFolder}"
