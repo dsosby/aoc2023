@@ -16,3 +16,7 @@ and got the same answer at least.
 Oooohhh....that's a big number.
 
 Time to go look up some big float crates?
+
+## DOH
+
+Lol... my "kerning" was bad. That wasn't a big number. `f64` handles it fine. Phew.
