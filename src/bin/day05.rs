@@ -70,7 +70,7 @@ fn main() {
   // Achshually - those seeds are many more than that
   // They are range pairs, e.g. X Y -> start..(start+y)
   // Same question - of all of _those_ seeds which has the closet location?
-  let moar_seeds = seeds.iter()
+  let min_location_of_all = seeds.iter()
     .chunks(2)
     .into_iter()
     .flat_map(|mut chnk| {
@@ -79,10 +79,7 @@ fn main() {
 
       start..(start + count)
     })
-    .collect::<Vec<u128>>();
-
-  let min_location_of_all = moar_seeds.iter()
-    .map(|&seed| {
+    .map(|seed| {
       maps.iter().fold(seed, |current, remap| remap.map(current))
     })
     .min();
